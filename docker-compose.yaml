@@ -5,7 +5,7 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://user:password@db/mydb
-      - OTLP_ENDPOINT=http://jaeger:4317
+      - OTLP_ENDPOINT=http://alloy:4317
   db:
     image: postgres
     environment:
@@ -16,11 +16,38 @@ services:
       - "5432:5432"
 
   # Monitoring
-  jaeger:
-    image: cr.jaegertracing.io/jaegertracing/jaeger:2.17.0
+  alloy:
+    image: grafana/alloy:latest
     ports:
-      - "16686:16686"
-      - "4317:4317"
-      - "4318:4318"
-      - "5778:5778"
-      - "9411:9411"
+      - "12345:12345" # Alloy UI
+      - "4317:4317" # OTLP gRPC
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: run --server.http.listen-addr=0.0.0.0:12345 /etc/alloy/config.alloy
+
+  tempo:
+    image: grafana/tempo:latest
+    volumes:
+      - ./tempo/config.yaml:/etc/tempo/config.yaml
+    command: -config.file=/etc/tempo/config.yaml
+
+  loki:
+    image: grafana/loki:latest
+    command: -config.file=/etc/loki/config.yaml
+    volumes:
+      - ./loki/config.yaml:/etc/loki/config.yaml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    depends_on:
+      - alloy
+      - tempo
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning

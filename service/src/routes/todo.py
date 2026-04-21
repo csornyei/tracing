@@ -7,7 +7,7 @@ from src.logger import logger
 from src.models import Todo
 from schemas import TodoCreate, TodoOut, TodoUpdate
 
-router = APIRouter(prefix="/todos", tags=["todos"])
+router = APIRouter(prefix="", tags=["todos"])
 
 
 @router.post("/todos/", response_model=TodoOut, status_code=201)
@@ -47,7 +47,11 @@ def update_todo(todo_id: int, payload: TodoUpdate, db: Session = Depends(get_db)
         setattr(todo, field, value)
     db.commit()
     db.refresh(todo)
-    logger.info("todo updated", todo_id=todo_id, fields=list(payload.model_dump(exclude_unset=True).keys()))
+    logger.info(
+        "todo updated",
+        todo_id=todo_id,
+        fields=list(payload.model_dump(exclude_unset=True).keys()),
+    )
     return todo
 
 

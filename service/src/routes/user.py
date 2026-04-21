@@ -7,7 +7,7 @@ from src.models import Todo, User
 from schemas import UserCreate, UserOut, UserUpdate, UserWithTodosOut
 from fastapi.routing import APIRouter
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="", tags=["users"])
 
 
 @router.post("/users/", response_model=UserOut, status_code=201)
@@ -48,7 +48,11 @@ def update_user(user_id: int, payload: UserUpdate, db: Session = Depends(get_db)
         setattr(user, field, value)
     db.commit()
     db.refresh(user)
-    logger.info("user updated", user_id=user_id, fields=list(payload.model_dump(exclude_unset=True).keys()))
+    logger.info(
+        "user updated",
+        user_id=user_id,
+        fields=list(payload.model_dump(exclude_unset=True).keys()),
+    )
     return user
 
 
