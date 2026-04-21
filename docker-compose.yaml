@@ -5,6 +5,7 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://user:password@db/mydb
+      - OTLP_ENDPOINT=http://jaeger:4317
   db:
     image: postgres
     environment:
@@ -13,3 +14,13 @@ services:
       POSTGRES_DB: mydb
     ports:
       - "5432:5432"
+
+  # Monitoring
+  jaeger:
+    image: cr.jaegertracing.io/jaegertracing/jaeger:2.17.0
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+      - "5778:5778"
+      - "9411:9411"

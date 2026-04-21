@@ -38,3 +38,7 @@ class TodoOut(BaseModel):
     user_id: int | None
 
     model_config = {"from_attributes": True}
+
+
+class UserWithTodosOut(UserOut):
+    todos: list[TodoOut] = []
