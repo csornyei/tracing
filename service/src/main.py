@@ -8,7 +8,7 @@ from src.routes.user import router as user_router
 from src.routes.todo import router as todo_router
 from src.tracing import setup_tracing
 
-setup_tracing(service_name="todo-app", otlp_endpoint=config.OTLP_ENDPOINT)
+setup_tracing(service_name="tracing-test", otlp_endpoint=config.OTLP_ENDPOINT)
 
 Base.metadata.create_all(bind=engine)
 

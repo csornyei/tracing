@@ -5,7 +5,7 @@ from pathlib import Path
 
 import httpx
 
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://pi:32421"
 USERS_FILE = Path(__file__).parent / "users.json"
 
 TODO_TITLES = [
